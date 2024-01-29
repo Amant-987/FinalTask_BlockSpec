@@ -1,4 +1,9 @@
 from .animal import Animal
 from .pet import Pet
 from .beast_of_burden import BeastOfBurden
-# и так далее для всех классов
+from .camel import Camel
+from .cat import Cat
+from .dog import Dog
+from .donkey import Donkey
+from .hamster import Hamster
+from .horse import Horse
