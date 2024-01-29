@@ -128,217 +128,212 @@ mysql -u amant -p
 ```
 
 ```
-CREATE DATABASE Друзья_человека;
+CREATE DATABASE PetsDatabase;
 ```
 
 #### 8 Создать таблицы с иерархией из диаграммы в БД
-
-Таблица "Животные":
-
 ```sql
-CREATE TABLE Животные (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  тип VARCHAR(50)
+USE PetsDatabase;
+
+-- Создание таблицы Pets
+CREATE TABLE Pets (
+    id INT AUTO_INCREMENT,
+    name VARCHAR(255),
+    PRIMARY KEY (id)
 );
-```
 
-Таблица "Домашние животные"
-
-```sql
-CREATE TABLE Домашние_животные (
-  id INT PRIMARY KEY,
-  вид VARCHAR(50),
-  FOREIGN KEY (id) REFERENCES Животные(id)
+-- Создание таблиц для домашних животных
+CREATE TABLE DomesticPets (
+    id INT,
+    type VARCHAR(255),
+    PRIMARY KEY (id)
 );
-```
 
-Таблица "Собаки"
-
-```sql
-CREATE TABLE Собаки (
-  id INT PRIMARY KEY,
-  имя VARCHAR(50),
-  команда VARCHAR(50),
-  дата_рождения DATE,
-  FOREIGN KEY (id) REFERENCES Домашние_животные(id)
+CREATE TABLE Dogs (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES DomesticPets(id)
 );
-```
 
-Таблица "Кошки"
-
-```sql
-CREATE TABLE Кошки (
-  id INT PRIMARY KEY,
-  имя VARCHAR(50),
-  команда VARCHAR(50),
-  дата_рождения DATE,
-  FOREIGN KEY (id) REFERENCES Домашние_животные(id)
+CREATE TABLE Cats (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES DomesticPets(id)
 );
-```
 
-Таблица "Хомяки"
-
-```sql
-CREATE TABLE Хомяки (
-  id INT PRIMARY KEY,
-  имя VARCHAR(50),
-  команда VARCHAR(50),
-  дата_рождения DATE,
-  FOREIGN KEY (id) REFERENCES Домашние_животные(id)
+CREATE TABLE Hamsters (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES DomesticPets(id)
 );
-```
 
-Таблица "Вьючные животные"
-
-```sql
-CREATE TABLE Вьючные_животные (
-  id INT PRIMARY KEY,
-  вид VARCHAR(50),
-  FOREIGN KEY (id) REFERENCES Животные(id)
+-- Создание таблиц для вьючных животных
+CREATE TABLE BeastsOfBurden (
+    id INT,
+    type VARCHAR(255),
+    PRIMARY KEY (id)
 );
-```
 
-Таблица "Лошади"
-
-```sql
-CREATE TABLE Лошади (
-  id INT PRIMARY KEY,
-  имя VARCHAR(50),
-  команда VARCHAR(50),
-  дата_рождения DATE,
-  FOREIGN KEY (id) REFERENCES Вьючные_животные(id)
+CREATE TABLE Horses (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES BeastsOfBurden(id)
 );
-```
 
-Таблица "Верблюды"
-
-```sql
-CREATE TABLE Верблюды (
-  id INT PRIMARY KEY,
-  имя VARCHAR(50),
-  команда VARCHAR(50),
-  дата_рождения DATE,
-  FOREIGN KEY (id) REFERENCES Вьючные_животные(id)
+CREATE TABLE Camels (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES BeastsOfBurden(id)
 );
-```
 
-Таблица "Ослы"
-
-```sql
-CREATE TABLE Ослы (
-  id INT PRIMARY KEY,
-  имя VARCHAR(50),
-  команда VARCHAR(50),
-  дата_рождения DATE,
-  FOREIGN KEY (id) REFERENCES Вьючные_животные(id)
+CREATE TABLE Donkeys (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES BeastsOfBurden(id)
 );
-```
 
-#### Заполняем верхние таблицы иерархии.
+-- Заполнение иерархических таблиц
+INSERT INTO Pets(id, name)
+VALUES  (1, 'DomesticPets'),
+		(2,'BeastsOfBurden');
 
-```sql
-INSERT INTO Животные ( тип)
-VALUES ( 'Домашние_животные'),
-( 'Вьючные_животные');
+INSERT INTO DomesticPets(id,type)
+VALUES (1,'Dogs'),(2,'Cats'),(3,'Hamsters');
 
-INSERT INTO Домашние_животные (id, вид)
-VALUES (1, 'Собаки'),
-(2, 'Кошки'),
-(3, 'Хомяки');
+INSERT INTO BeastsOfBurden(id,type)
+VALUES (1,'Horses'),(2,'Camels'),(3,'Donkeys');
 
-INSERT INTO Вьючные_животные (id, вид)
-VALUES (1, 'Лошади'),
-(2, 'Верблюды'),
-(3, 'Ослы');
-```
+-- Заполнение таблицы Dogs
+INSERT INTO Dogs (id, name, commands, birth_date) VALUES
+(1, 'Rex', 'Sit, Stay, Fetch', '2020-01-01'),
+(2, 'Fido', 'Sit, Paw, Roll over', '2019-03-15'),
+(3, 'Spot', 'Stay, Fetch, Spin', '2021-06-30');
 
-#### 9. Заполнить низкоуровневые таблицы именами(животных), командами которые они выполняют и датами рождения
+-- Заполнение таблицы Cats
+INSERT INTO Cats (id, name, commands, birth_date) VALUES
+(1, 'Whiskers', 'Sit, Purr, Ignore', '2018-07-07'),
+(2, 'Fluffy', 'Purr, Nap, Ignore', '2020-02-14'),
+(3, 'Mittens', 'Nap, Purr, Ignore', '2019-11-01');
 
-```sql
-INSERT INTO Собаки ( имя, команда, дата_рождения)
-VALUES ('Тайгер', 'Место', '2020-05-10'),
-       ('Дружок', 'Хайд', '2021-02-15'),
-       ('Стрелка', 'Апорт', '2020-07-20');
-```
+-- Заполнение таблицы Hamsters
+INSERT INTO Hamsters (id, name, commands, birth_date) VALUES
+(1, 'Squeaky', 'Run, Eat, Sleep', '2021-04-01'),
+(2, 'Nibbles', 'Eat, Sleep, Run', '2021-05-15'),
+(3, 'Peanut', 'Sleep, Run, Eat', '2021-08-30');
 
-```sql
-INSERT INTO Кошки ( имя, команда, дата_рождения)
-VALUES ('Маня', 'Кисссс', '2023-09-01'),
-       ('Маркин', 'Брысь' '2020-11-12'),
-       ('Персик', 'Кушать' '2021-04-05');
-```
+-- Заполнение таблицы Horses
+INSERT INTO Horses (id, name, commands, birth_date) VALUES
+(1, 'Thunder', 'Gallop, Trot, Jump', '2018-01-01'),
+(2, 'Lightning', 'Trot, Gallop, Jump', '2017-03-15'),
+(3, 'Storm', 'Jump, Gallop, Trot', '2019-06-30');
 
-```sql
-INSERT INTO Хомяки ( имя, команда, дата_рождения)
-VALUES ('Дейл', 'Ешь', '2021-01-20'),
-       ('Чип', 'Пей', '2022-09-08');
-```
+-- Заполнение таблицы Camels
+INSERT INTO Camels (id, name, commands, birth_date) VALUES
+(1, 'Sandy', 'Walk, Run, Sit', '2016-07-07'),
+(2, 'Dusty', 'Run, Walk, Sit', '2018-02-14'),
+(3, 'Rocky', 'Sit, Walk, Run', '2017-11-01');
 
-```sql
-INSERT INTO Лошади ( имя, команда, дата_рождения)
-VALUES ('Антаг', 'Но', '2020-01-21'),
-       ('Вороной', 'Тпрууу', '2020-09-08');
-```
-
-```sql
-INSERT INTO Верблюды ( имя, команда, дата_рождения)
-VALUES ('Борька', 'Но родимый', '2021-01-21'),
-       ('Брюзгин', 'Тпрууу', '2021-09-08');
-```
-
-```sql
-INSERT INTO Ослы ( имя, команда, дата_рождения)
-VALUES ('Сорванец', 'Но родимый', '2020-01-21'),
-       ('Брыкало', 'Тпрууу', '2020-09-08');
+-- Заполнение таблицы Donkeys
+INSERT INTO Donkeys (id, name, commands, birth_date) VALUES
+(1, 'Stubborn', 'Stand, Walk, Run', '2019-04-01'),
+(2, 'Silly', 'Walk, Stand, Run', '2020-05-15'),
+(3, 'Dopey', 'Run, Stand, Walk', '2018-08-30');
 ```
 
 10 Удалив из таблицы верблюдов, т.к. верблюдов решили перевезти в другой питомник на зимовку. Объединить таблицы лошади, и ослы в одну таблицу.
 
 ```
-DELETE FROM Верблюды;
+DELETE FROM Camels;
 ```
 
 ```sql
-CREATE TABLE Лошади_и_ослы AS
-SELECT * FROM Лошади
-UNION
-SELECT * FROM Ослы;
+-- Создание новой таблицы HorsesAndDonkeys
+CREATE TABLE HorsesAndDonkeys (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    type ENUM('Horse', 'Donkey'),
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES BeastsOfBurden(id)
+);
+
+-- Заполнение таблицы HorsesAndDonkeys данными из таблицы Horses
+INSERT INTO HorsesAndDonkeys (id, name, commands, birth_date, type)
+SELECT id, name, commands, birth_date, 'Horse' FROM Horses;
+
+-- Заполнение таблицы HorsesAndDonkeys данными из таблицы Donkeys
+INSERT INTO HorsesAndDonkeys (id, name, commands, birth_date, type)
+SELECT id, name, commands, birth_date, 'Donkey' FROM Donkeys;
+
 ```
 
 #### 11 Создать новую таблицу “молодые животные” в которую попадут все животные старше 1 года, но младше 3 лет и в отдельном столбце с точностью до месяца подсчитать возраст животных в новой таблице
 
 ```sql
-CREATE TABLE молодые_животные AS
-SELECT *, TIMESTAMPDIFF(MONTH, дата_рождения, CURDATE()) AS возраст_в_месяцах
+-- Создание новой таблицы YoungAnimals
+CREATE TABLE YoungAnimals AS
+SELECT *, TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) AS age_in_months
 FROM (
-    SELECT 'Собаки' AS тип_животного, имя, команда, дата_рождения FROM Собаки
+    SELECT * FROM Dogs
     UNION ALL
-    SELECT 'Кошки' AS тип_животного, имя, команда, дата_рождения FROM Кошки
+    SELECT * FROM Cats
     UNION ALL
-    SELECT 'Хомяки' AS тип_животного, имя, команда, дата_рождения FROM Хомяки
+    SELECT * FROM Hamsters
     UNION ALL
-    SELECT 'Лошади' AS тип_животного, имя, команда, дата_рождения FROM Лошади
+    SELECT * FROM Horses
     UNION ALL
-    SELECT 'Ослы' AS тип_животного, имя, команда, дата_рождения FROM Ослы
-) AS животные
-WHERE дата_рождения >= DATE_SUB(CURDATE(), INTERVAL 3 YEAR)
-AND дата_рождения <= DATE_SUB(CURDATE(), INTERVAL 1 YEAR);
+    SELECT * FROM Donkeys
+) AS AllAnimals
+WHERE TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) BETWEEN 1 AND 3;
+
 
 ```
 
 #### 12 Объединить все таблицы в одну, при этом сохраняя поля, указывающие на прошлую принадлежность к старым таблицам.
 
 ```sql
-CREATE TABLE Животные_все AS
-SELECT 'Собаки' AS тип_животного, имя, команда, дата_рождения FROM Собаки
+-- Создание новой таблицы AllAnimals
+CREATE TABLE AllAnimals (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    type ENUM('Dog', 'Cat', 'Hamster', 'Horse', 'Donkey'),
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Pets(id)
+);
+
+-- Заполнение таблицы AllAnimals данными из всех таблиц с животными
+INSERT INTO AllAnimals (id, name, commands, birth_date, type)
+SELECT id, name, commands, birth_date, 'Dog' FROM Dogs
 UNION ALL
-SELECT 'Кошки' AS тип_животного, имя, команда, дата_рождения FROM Кошки
+SELECT id, name, commands, birth_date, 'Cat' FROM Cats
 UNION ALL
-SELECT 'Хомяки' AS тип_животного, имя, команда, дата_рождения FROM Хомяки
+SELECT id, name, commands, birth_date, 'Hamster' FROM Hamsters
 UNION ALL
-SELECT 'Лошади' AS тип_животного, имя, команда, дата_рождения FROM Лошади
+SELECT id, name, commands, birth_date, 'Horse' FROM Horses
 UNION ALL
-SELECT 'Ослы' AS тип_животного, имя, команда, дата_рождения FROM Ослы;
+SELECT id, name, commands, birth_date, 'Donkey' FROM Donkeys;
+
 
 ```
 
@@ -348,17 +343,14 @@ SELECT 'Ослы' AS тип_животного, имя, команда, дата
 
 ##### 14. Написать программу, имитирующую работу реестра домашних животных.<br><br>
 
-    В программе должен быть реализован следующий функционал:<br><br>
+    В программе должен быть реализован следующий функционал:
 
-    14.1 Завести новое животное<br>
+    14.1 Завести новое животное
     14.2 определять животное в правильный класс<br>
     14.3 увидеть список команд, которое выполняет животное<br>
     14.4 обучить животное новым командам<br>
     14.5 Реализовать навигацию по меню<br><br>
-
-##### 15. Создайте класс Счетчик, у которого есть метод add(), увеличивающий̆
-
-    значение внутренней̆ int переменной̆ на 1 при нажатии “Завести новое
+15. Создайте класс Счетчик, у которого есть метод add(), увеличивающий̆  значение внутренней̆ int переменной̆ на 1 при нажатии “Завести новое
     животное” Сделайте так, чтобы с объектом такого типа можно было работать в
     блоке try-with-resources. Нужно бросить исключение, если работа с объектом
     типа счетчик была не в ресурсном try и/или ресурс остался открыт. Значение
