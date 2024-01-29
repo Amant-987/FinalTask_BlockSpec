@@ -133,9 +133,6 @@ CREATE DATABASE PetsDatabase;
 
 #### 8 Создать таблицы с иерархией из диаграммы в БД
 ```sql
--- Создание базы данных
-CREATE DATABASE PetsDatabase;
-
 USE PetsDatabase;
 
 -- Создание таблицы Pets
@@ -264,50 +261,79 @@ INSERT INTO Donkeys (id, name, commands, birth_date) VALUES
 10 Удалив из таблицы верблюдов, т.к. верблюдов решили перевезти в другой питомник на зимовку. Объединить таблицы лошади, и ослы в одну таблицу.
 
 ```
-DELETE FROM Верблюды;
+DELETE FROM Camels;
 ```
 
 ```sql
-CREATE TABLE Лошади_и_ослы AS
-SELECT * FROM Лошади
-UNION
-SELECT * FROM Ослы;
+-- Создание новой таблицы HorsesAndDonkeys
+CREATE TABLE HorsesAndDonkeys (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    type ENUM('Horse', 'Donkey'),
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES BeastsOfBurden(id)
+);
+
+-- Заполнение таблицы HorsesAndDonkeys данными из таблицы Horses
+INSERT INTO HorsesAndDonkeys (id, name, commands, birth_date, type)
+SELECT id, name, commands, birth_date, 'Horse' FROM Horses;
+
+-- Заполнение таблицы HorsesAndDonkeys данными из таблицы Donkeys
+INSERT INTO HorsesAndDonkeys (id, name, commands, birth_date, type)
+SELECT id, name, commands, birth_date, 'Donkey' FROM Donkeys;
+
 ```
 
 #### 11 Создать новую таблицу “молодые животные” в которую попадут все животные старше 1 года, но младше 3 лет и в отдельном столбце с точностью до месяца подсчитать возраст животных в новой таблице
 
 ```sql
-CREATE TABLE молодые_животные AS
-SELECT *, TIMESTAMPDIFF(MONTH, дата_рождения, CURDATE()) AS возраст_в_месяцах
+-- Создание новой таблицы YoungAnimals
+CREATE TABLE YoungAnimals AS
+SELECT *, TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) AS age_in_months
 FROM (
-    SELECT 'Собаки' AS тип_животного, имя, команда, дата_рождения FROM Собаки
+    SELECT * FROM Dogs
     UNION ALL
-    SELECT 'Кошки' AS тип_животного, имя, команда, дата_рождения FROM Кошки
+    SELECT * FROM Cats
     UNION ALL
-    SELECT 'Хомяки' AS тип_животного, имя, команда, дата_рождения FROM Хомяки
+    SELECT * FROM Hamsters
     UNION ALL
-    SELECT 'Лошади' AS тип_животного, имя, команда, дата_рождения FROM Лошади
+    SELECT * FROM Horses
     UNION ALL
-    SELECT 'Ослы' AS тип_животного, имя, команда, дата_рождения FROM Ослы
-) AS животные
-WHERE дата_рождения >= DATE_SUB(CURDATE(), INTERVAL 3 YEAR)
-AND дата_рождения <= DATE_SUB(CURDATE(), INTERVAL 1 YEAR);
+    SELECT * FROM Donkeys
+) AS AllAnimals
+WHERE TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) BETWEEN 1 AND 3;
+
 
 ```
 
 #### 12 Объединить все таблицы в одну, при этом сохраняя поля, указывающие на прошлую принадлежность к старым таблицам.
 
 ```sql
-CREATE TABLE Животные_все AS
-SELECT 'Собаки' AS тип_животного, имя, команда, дата_рождения FROM Собаки
+-- Создание новой таблицы AllAnimals
+CREATE TABLE AllAnimals (
+    id INT,
+    name VARCHAR(255),
+    commands VARCHAR(255),
+    birth_date DATE,
+    type ENUM('Dog', 'Cat', 'Hamster', 'Horse', 'Donkey'),
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Pets(id)
+);
+
+-- Заполнение таблицы AllAnimals данными из всех таблиц с животными
+INSERT INTO AllAnimals (id, name, commands, birth_date, type)
+SELECT id, name, commands, birth_date, 'Dog' FROM Dogs
 UNION ALL
-SELECT 'Кошки' AS тип_животного, имя, команда, дата_рождения FROM Кошки
+SELECT id, name, commands, birth_date, 'Cat' FROM Cats
 UNION ALL
-SELECT 'Хомяки' AS тип_животного, имя, команда, дата_рождения FROM Хомяки
+SELECT id, name, commands, birth_date, 'Hamster' FROM Hamsters
 UNION ALL
-SELECT 'Лошади' AS тип_животного, имя, команда, дата_рождения FROM Лошади
+SELECT id, name, commands, birth_date, 'Horse' FROM Horses
 UNION ALL
-SELECT 'Ослы' AS тип_животного, имя, команда, дата_рождения FROM Ослы;
+SELECT id, name, commands, birth_date, 'Donkey' FROM Donkeys;
+
 
 ```
 
@@ -317,17 +343,14 @@ SELECT 'Ослы' AS тип_животного, имя, команда, дата
 
 ##### 14. Написать программу, имитирующую работу реестра домашних животных.<br><br>
 
-    В программе должен быть реализован следующий функционал:<br><br>
+    В программе должен быть реализован следующий функционал:
 
-    14.1 Завести новое животное<br>
+    14.1 Завести новое животное
     14.2 определять животное в правильный класс<br>
     14.3 увидеть список команд, которое выполняет животное<br>
     14.4 обучить животное новым командам<br>
     14.5 Реализовать навигацию по меню<br><br>
-
-##### 15. Создайте класс Счетчик, у которого есть метод add(), увеличивающий̆
-
-    значение внутренней̆ int переменной̆ на 1 при нажатии “Завести новое
+15. Создайте класс Счетчик, у которого есть метод add(), увеличивающий̆  значение внутренней̆ int переменной̆ на 1 при нажатии “Завести новое
     животное” Сделайте так, чтобы с объектом такого типа можно было работать в
     блоке try-with-resources. Нужно бросить исключение, если работа с объектом
     типа счетчик была не в ресурсном try и/или ресурс остался открыт. Значение
