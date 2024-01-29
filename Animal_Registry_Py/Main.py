@@ -6,8 +6,9 @@ def main():
         print("1. Завести новое животное")
         print("2. Увидеть список команд, которое выполняет животное")
         print("3. Обучить животное новым командам")
-        print("4. Сохранить в CSV")
-        print("5. Выход")
+        print("4. Просмотреть введенных животных и их характеристики")
+        print("5. Сохранить в CSV")
+        print("6. Выход")
         choice = input("Выберите действие: ")
         if choice == "1":
             animal_type = input("Введите тип животного (Dog, Cat, Hamster, Donkey, Horse, Camel): ")
@@ -38,9 +39,12 @@ def main():
             registry.get_animals()[animal_index].add_command(command)
             print(f"Команда {command} добавлена для животного {registry.get_animals()[animal_index].name}.")
         elif choice == "4":
+            for i, animal in enumerate(registry.get_animals(), start=1):
+                print(f"{i}. {animal.name} ({type(animal).__name__}): {animal.get_commands()}")
+        elif choice == "5":
             registry.save_to_csv()
             print("Животные сохранены в файл CSV.")
-        elif choice == "5":
+        elif choice == "6":
             break
         else:
             print("Неверный выбор.")
